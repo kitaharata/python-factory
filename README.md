@@ -20,4 +20,4 @@ Format
 ruff format --line-length=120 --target-version=py310 *.py
 ```
 
-SPDX-License-Identifier: MIT
+SPDX-License-Identifier: Unlicense
