@@ -14,7 +14,7 @@ class TimerApp(tk.Tk):
         self.timer_id = None
         self.is_running = False
 
-        self.time_label = tk.Label(self, text="00:00:00", font=("Helvetica", 48))
+        self.time_label = tk.Label(self, text="00:00:00", font=("Arial", 48))
         self.time_label.pack(pady=20)
 
         input_frame = tk.Frame(self)
