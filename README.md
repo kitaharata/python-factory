@@ -7,11 +7,16 @@
 - 2025-08-05 - Shooting Game - [1754319600.py](1754319600.py)
 - 2025-08-06 - Time Zip - [1754406000.py](1754406000.py)
 - 2025-08-07 - Rule 110 PBM - [1754492400.py](1754492400.py)
+- 2025-08-08 - Flask ToDo App - [1754578800.py](1754578800.py) ([1754578830.html](1754578830.html))
 
 Run
 
 ```
 uv run 1753974000.py
+```
+
+```
+uv run --with-requirements=requirements.txt 1754578800.py
 ```
 
 Lint
