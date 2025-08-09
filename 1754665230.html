@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Blog</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  </head>
+  <body>
+    <main class="container">
+      <h1>Simple Blog</h1>
+      <p>
+        Welcome! Anyone can view this blog. Administrators can <a href="{{ url_for('post_article') }}"
+        >post from here</a>.
+      </p>
+
+      {% for post in posts %}
+      <article>
+        <header>
+          <h2>{{ post.title }}</h2>
+          <small>Author: {{ post.author }} | Date: {{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+        </header>
+        <p>{{ post.content }}</p>
+        {% if user %}
+        <form
+          action="{{ url_for('delete_post', post_id=post.id) }}"
+          method="post"
+          onsubmit="return confirm('Are you sure you want to delete this post?');"
+        >
+          <div role="group">
+            <a href="{{ url_for('edit_post', post_id=post.id) }}" role="button">Edit</a>
+            <button type="submit" class="secondary">Delete</button>
+          </div>
+        </form>
+        {% endif %}
+      </article>
+      {% endfor %}
+    </main>
+  </body>
+</html>
