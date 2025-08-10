@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1-bit Image Converter</title>
+  </head>
+  <body>
+    <h1>1-bit Image Converter</h1>
+
+    {% if error %}
+    <p>Error: {{ error }}</p>
+    {% endif %} {% if original_image_data and converted_image_data %}
+    <h2>Preview</h2>
+    <table border="1">
+      <thead>
+        <tr>
+          <th>Before</th>
+          <th>After (1-bit)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><img src="data:image/png;base64,{{ original_image_data }}" alt="Original image"></td>
+          <td><img src="data:image/png;base64,{{ converted_image_data }}" alt="Converted image"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <form method="post" action="{{ url_for('download') }}">
+      <input type="hidden" name="image_data" value="{{ converted_image_data }}">
+      <input type="hidden" name="filename" value="{{ output_filename }}">
+      <input type="submit" value="Download Converted Image">
+    </form>
+
+    <hr>
+
+    <p>Upload another image:</p>
+    {% else %}
+    <p>Upload an image to convert it to a 1-bit PNG image using Floyd-Steinberg dithering.</p>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data">
+      <input type="file" name="file" accept="image/*" required>
+      <input type="submit" value="Convert and Preview">
+    </form>
+  </body>
+</html>
