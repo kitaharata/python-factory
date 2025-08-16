@@ -52,7 +52,7 @@ def main():
 
     if len(sys.argv) == 2 and first_arg.endswith(".zip"):
         if not os.path.isfile(first_arg):
-            print(f"Error: Zip file not found at '{first_arg}'")
+            print(f"Error: ZIP file not found at '{first_arg}'")
             sys.exit(1)
         unzip_archive(first_arg)
     else:
