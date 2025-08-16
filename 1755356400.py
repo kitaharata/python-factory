@@ -132,5 +132,5 @@ if __name__ == "__main__":
 
     zip_path = sys.argv[1]
     root = tk.Tk()
-    ZipImageViewer(root, zip_path)
+    app = ZipImageViewer(root, zip_path)
     root.mainloop()
