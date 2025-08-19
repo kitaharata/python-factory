@@ -27,6 +27,10 @@ uv run 1753974000.py
 ```
 
 ```
+uv run --with="Flask==3.1.1" --with="waitress==3.0.2" 1754578800.py
+```
+
+```
 uv run --with-requirements=requirements.txt 1754578800.py
 ```
 
