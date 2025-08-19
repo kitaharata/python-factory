@@ -5,6 +5,7 @@ Flask-HTTPAuth==4.8.0
 Flask-SQLAlchemy==3.1.1
 numpy==2.3.2
 pillow==11.3.0
+pyxel==2.4.10
 requests==2.32.4
 waitress==3.0.2
 Werkzeug==3.1.3
