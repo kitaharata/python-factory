@@ -19,6 +19,7 @@
 - 2025-08-17 - ZIP Image Viewer - [1755356400.py](1755356400.py)
 - 2025-08-18 - Split Animated GIF - [1755442800.py](1755442800.py)
 - 2025-08-19 - Pyxel Shooting Game - [1755529200.py](1755529200.py)
+- 2025-08-20 - Snake Game - [1755615600.py](1755615600.py)
 
 Run
 
