@@ -1,0 +1,78 @@
+{
+  "player_initial_stats": { "hp": 100, "max_hp": 100, "attack": 10, "defense": 5, "gold": 0, "exp": 0, "level": 1 },
+  "items": [
+    {
+      "id": "potion",
+      "name": "Potion",
+      "description": "Restores 50 HP.",
+      "type": "consumable",
+      "effect": { "hp_restore": 50 }
+    },
+    {
+      "id": "sword",
+      "name": "Bronze Sword",
+      "description": "Attack +5.",
+      "type": "weapon",
+      "effect": { "attack_boost": 5 }
+    }
+  ],
+  "enemies": [
+    { "id": "goblin", "name": "Goblin", "hp": 30, "attack": 8, "defense": 2, "reward_exp": 10, "reward_gold": 5 },
+    { "id": "slime", "name": "Slime", "hp": 20, "attack": 5, "defense": 1, "reward_exp": 5, "reward_gold": 2 }
+  ],
+  "events": [
+    {
+      "id": "start_game",
+      "type": "message",
+      "message": "You embarked on a new adventure.",
+      "next_event": "forest_entrance"
+    },
+    {
+      "id": "forest_entrance",
+      "type": "choice",
+      "message": "You arrived at the entrance of a deep forest. What will you do?",
+      "choices": [
+        { "text": "Proceed deeper into the forest", "outcome": { "next_event": "encounter_goblin" } },
+        { "text": "Turn back", "outcome": { "message": "Decided not to go this time.", "next_event": "town_return" } }
+      ]
+    },
+    {
+      "id": "encounter_goblin",
+      "type": "battle",
+      "enemy_id": "goblin",
+      "message": "A goblin appeared!",
+      "on_win": { "next_event": "forest_cleared" },
+      "on_lose": { "next_event": "game_over" }
+    },
+    {
+      "id": "forest_cleared",
+      "type": "message",
+      "message": "You defeated the goblin! You can now proceed deeper into the forest.",
+      "next_event": "find_item"
+    },
+    {
+      "id": "find_item",
+      "type": "item_get",
+      "item_id": "potion",
+      "quantity": 1,
+      "message": "Found a Potion!",
+      "next_event": "forest_entrance"
+    },
+    {
+      "id": "town_return",
+      "type": "message",
+      "message": "Returned to town. What will you do?",
+      "choices": [
+        { "text": "Go to the forest again", "outcome": { "next_event": "forest_entrance" } },
+        { "text": "Check status", "outcome": { "next_event": "view_status" } }
+      ]
+    },
+    { "id": "view_status", "type": "status", "message": "Current Status:", "next_event": "town_return" },
+    {
+      "id": "game_over",
+      "type": "message",
+      "message": "You ran out of strength. Game Over.",
+      "next_event": "game_over_final"
+    }
+  ]
+}
