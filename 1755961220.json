@@ -1,0 +1,163 @@
+{
+  "player_initial_stats": { "hp": 100, "max_hp": 100, "attack": 10, "defense": 5, "gold": 0, "exp": 0, "level": 1 },
+  "items": [
+    {
+      "id": "potion",
+      "name": "Potion",
+      "description": "Restores 50 HP.",
+      "type": "consumable",
+      "price": 10,
+      "effect": { "hp_restore": 50 }
+    },
+    {
+      "id": "sword",
+      "name": "Bronze Sword",
+      "description": "Attack +5.",
+      "type": "weapon",
+      "price": 50,
+      "effect": { "attack_boost": 5 }
+    },
+    {
+      "id": "hi_potion",
+      "name": "Hi-Potion",
+      "description": "Restores 100 HP.",
+      "type": "consumable",
+      "price": 30,
+      "effect": { "hp_restore": 100 }
+    },
+    {
+      "id": "shiny_stone",
+      "name": "Shiny Stone",
+      "description": "A mysterious stone that seems to fetch a good price. Cannot be used in battle.",
+      "type": "sellable_only",
+      "price": 100,
+      "effect": {}
+    }
+  ],
+  "enemies": [
+    { "id": "goblin", "name": "Goblin", "hp": 30, "attack": 8, "defense": 2, "reward_exp": 10, "reward_gold": 5 },
+    { "id": "slime", "name": "Slime", "hp": 20, "attack": 5, "defense": 1, "reward_exp": 5, "reward_gold": 2 },
+    { "id": "wolf", "name": "Wolf", "hp": 40, "attack": 12, "defense": 3, "reward_exp": 15, "reward_gold": 8 },
+    { "id": "big_slime", "name": "Big Slime", "hp": 35, "attack": 7, "defense": 2, "reward_exp": 8, "reward_gold": 4 },
+    {
+      "id": "goblin_king",
+      "name": "Goblin King",
+      "hp": 100,
+      "attack": 20,
+      "defense": 10,
+      "reward_exp": 100,
+      "reward_gold": 50
+    }
+  ],
+  "events": [
+    {
+      "id": "start_game",
+      "type": "message",
+      "message": "A new adventure has begun.",
+      "next_event": "town_return"
+    },
+    {
+      "id": "forest_dungeon_initializer",
+      "type": "dungeon_initializer",
+      "message": "Arrived at the entrance of a deep forest.",
+      "dungeon_id": "forest_dungeon",
+      "initial_distance": 7,
+      "boss_event_id": "battle_goblin_king",
+      "normal_enemies": ["goblin", "slime", "wolf", "big_slime"],
+      "dungeon_items": ["potion", "hi_potion", "shiny_stone"],
+      "on_win_dungeon": "forest_cleared_message",
+      "on_lose_dungeon": "game_over",
+      "next_event": "forest_dungeon_explore_choice"
+    },
+    {
+      "id": "forest_dungeon_explore_choice",
+      "type": "choice",
+      "message": "Proceed deeper into the forest? Or turn back?",
+      "choices": [
+        { "text": "Proceed", "outcome": { "next_event": "dungeon_progress" } },
+        { "text": "Back", "outcome": { "next_event": "dungeon_retreat_logic" } }
+      ]
+    },
+    {
+      "id": "dungeon_progress",
+      "type": "dungeon_progress",
+      "message": "Proceeded further into the depths."
+    },
+    {
+      "id": "dungeon_random_battle",
+      "type": "battle",
+      "message": "An enemy attacked!",
+      "enemy_id": "temp_placeholder",
+      "on_win": { "next_event": "forest_dungeon_explore_choice" },
+      "on_lose": { "next_event": "game_over" }
+    },
+    {
+      "id": "battle_goblin_king",
+      "type": "battle",
+      "enemy_id": "goblin_king",
+      "message": "The battle against the Goblin King has begun!",
+      "on_win": { "next_event": "forest_cleared_message" },
+      "on_lose": { "next_event": "game_over" }
+    },
+    {
+      "id": "forest_cleared_message",
+      "type": "message",
+      "message": "Defeated the Goblin King deep in the forest! Peace has returned to the forest.",
+      "next_event": "town_return"
+    },
+    {
+      "id": "town_return",
+      "type": "choice",
+      "message": "Returned to town. What will you do?",
+      "choices": [
+        { "text": "Go to the forest", "outcome": { "next_event": "forest_dungeon_initializer" } },
+        { "text": "Go to the shop", "outcome": { "next_event": "shop_entrance" } },
+        { "text": "View status", "outcome": { "next_event": "view_status" } }
+      ]
+    },
+    { "id": "view_status", "type": "status", "message": "Current status:", "next_event": "town_return" },
+    {
+      "id": "game_over",
+      "type": "message",
+      "message": "You have fallen. Game Over.",
+      "next_event": "final_game_over_event"
+    },
+    {
+      "id": "final_game_over_event",
+      "type": "game_over_final_state"
+    },
+    {
+      "id": "dungeon_retreat_logic",
+      "type": "dungeon_retreat_logic",
+      "message": "Took a step back."
+    },
+    {
+      "id": "shop_entrance",
+      "type": "choice",
+      "message": "Welcome! What would you like?",
+      "choices": [
+        { "text": "Buy Items", "outcome": { "next_event": "shop_buy_menu" } },
+        { "text": "Sell Items", "outcome": { "next_event": "shop_sell_menu" } },
+        { "text": "Leave Shop", "outcome": { "next_event": "town_return" } }
+      ]
+    },
+    {
+      "id": "shop_buy_menu",
+      "type": "shop_buy_menu",
+      "message": "Which item would you like to buy?"
+    },
+    {
+      "id": "shop_transaction",
+      "type": "shop_transaction"
+    },
+    {
+      "id": "shop_sell_menu",
+      "type": "shop_sell_menu",
+      "message": "Which item would you like to sell?"
+    },
+    {
+      "id": "sell_item",
+      "type": "shop_sell_transaction"
+    }
+  ]
+}
