@@ -1,4 +1,5 @@
 import colorsys
+import random
 import tkinter as tk
 
 from PIL import Image, ImageTk
@@ -12,7 +13,7 @@ class ColorMeditationApp:
 
         self.width = 800
         self.height = 600
-        self.hue = 0.0
+        self.hue = round(random.random(), 4)
         self.saturation = 1.0
         self.brightness_min = 0.1
         self.brightness_max = 0.9
