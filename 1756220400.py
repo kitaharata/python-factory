@@ -1,5 +1,3 @@
-import random
-
 import pyxel
 
 BOARD_SIZE = 4
@@ -69,8 +67,8 @@ class App:
         """Adds a new 2 or 4 tile to a random empty spot on the board."""
         empty_cells = self.get_empty_cells()
         if empty_cells:
-            r, c = random.choice(empty_cells)
-            self.board[r][c] = 2 if random.random() < 0.9 else 4
+            r, c = empty_cells[pyxel.rndi(0, len(empty_cells) - 1)]
+            self.board[r][c] = 2 if pyxel.rndi(0, 9) < 9 else 4
             return True
         return False
 
