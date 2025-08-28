@@ -264,5 +264,4 @@ class App:
             pyxel.text(msg_x, msg_y, msg, COLOR_GAME_WON)
 
 
-if __name__ == "__main__":
-    App()
+App()
