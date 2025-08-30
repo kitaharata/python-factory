@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>国立国会図書館サーチ</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  </head>
+  <body>
+    <main class="container">
+      <h1>国立国会図書館サーチ</h1>
+      {% if error %}
+      <article>{{ error }}</article>
+      {% endif %} {% if show_form %}
+      <article>
+        <form action="/" method="post">
+          <input type="text" name="query" placeholder="ISBNを入力 (ハイフンなしで10桁または13桁)" required>
+          <button type="submit">検索</button>
+        </form>
+      </article>
+      {% endif %} {% if show_results %}
+      <article>
+        <h2>検索結果: "{{ query }}"</h2>
+      </article>
+      {% if results %} {% for book in results %}
+      <article>
+        <h3>{{ book.title }}</h3>
+        <ul>
+          <li><strong>著者:</strong> {{ book.creator if book.creator != '著者不明' else '不明' }}</li>
+          {% if book.title_transcription != '不明' %}
+          <li><strong>タイトル読み:</strong> {{ book.title_transcription }}</li>
+          {% endif %} {% if book.creator_transcription != '不明' %}
+          <li><strong>著者読み:</strong> {{ book.creator_transcription }}</li>
+          {% endif %} {% if book.publisher != '不明' %}
+          <li><strong>出版社:</strong> {{ book.publisher }}</li>
+          {% endif %} {% if book.publication_date != '不明' %}
+          <li><strong>出版年:</strong> {{ book.publication_date }}</li>
+          {% endif %} {% if book.publication_place != '不明' %}
+          <li><strong>出版地:</strong> {{ book.publication_place }}</li>
+          {% endif %} {% if book.price != '不明' %}
+          <li><strong>価格:</strong> {{ book.price }}</li>
+          {% endif %} {% if book.pages != '不明' %}
+          <li><strong>ページ数:</strong> {{ book.pages }}</li>
+          {% endif %} {% if book.subjects != '不明' %}
+          <li><strong>件名:</strong> {{ book.subjects }}</li>
+          {% endif %} {% if book.isbn10 %}
+          <li><strong>ISBN10:</strong> {{ book.isbn10 }}</li>
+          {% endif %} {% if book.isbn13 %}
+          <li><strong>ISBN13:</strong> {{ book.isbn13 }}</li>
+          {% endif %}
+        </ul>
+      </article>
+      {% endfor %} {% else %}
+      <p>検索結果が見つかりませんでした。</p>
+      {% endif %}
+      <p><a href="/">新しい検索</a></p>
+      {% endif %}
+      <article>
+        <p>
+          本サービスで提供するのメタデータの一部は、<a href="https://ndlsearch.ndl.go.jp/"
+          >国立国会図書館サーチの</a>APIから取得した国立国会図書館蔵書（国立国会図書館が運営）に由来します。
+          ライセンスは<a href="https://creativecommons.org/licenses/by/4.0/legalcode.ja"
+          >クリエイティブ・コモンズ 表示 4.0 国際 パブリック・ライセンス</a>です。
+        </p>
+      </article>
+    </main>
+  </body>
+</html>

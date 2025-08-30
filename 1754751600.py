@@ -7,7 +7,7 @@ from PIL import Image
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__, template_folder=".")
-ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "tiff", "webp"}
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp", "avif"}
 
 
 def is_allowed_file(filename):

@@ -51,7 +51,7 @@ class ZipImageViewer:
                     if file_info.is_dir():
                         continue
                     lower_filename = file_info.filename.lower()
-                    if lower_filename.endswith((".png", ".jpg", ".jpeg", ".gif", ".tiff", ".webp")):
+                    if lower_filename.endswith((".png", ".jpg", ".jpeg", ".gif", ".webp", ".avif")):
                         self.image_files.append(file_info.filename)
         except zipfile.BadZipFile:
             messagebox.showerror("Error", "Invalid ZIP file.")
