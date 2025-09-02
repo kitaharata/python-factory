@@ -18,7 +18,7 @@ PADDLE_SPEED = 3
 
 class App:
     def __init__(self):
-        pyxel.init(SCREEN_WIDTH, SCREEN_HEIGHT, title="Pyxel Breakout")
+        pyxel.init(SCREEN_WIDTH, SCREEN_HEIGHT, title="Breakout")
         pyxel.sounds[0].set("a3a2c2", "p", "7", "n", 5)
         pyxel.sounds[1].set("c3f3", "p", "7", "n", 5)
         pyxel.sounds[2].set("f1e1d1", "n", "7", "n", 5)
@@ -85,13 +85,15 @@ class App:
         ):
             self.ball_vy *= -1
             relative_impact = (self.ball_x - (self.paddle_x + PADDLE_WIDTH / 2)) / (PADDLE_WIDTH / 2)
-            self.ball_vx = relative_impact * INITIAL_BALL_SPEED_MAGNITUDE * 1.5
-            max_vx = INITIAL_BALL_SPEED_MAGNITUDE * 2
-            if abs(self.ball_vx) > max_vx:
-                self.ball_vx = max_vx * (1 if self.ball_vx > 0 else -1)
             target_speed = INITIAL_BALL_SPEED_MAGNITUDE + (self.score / 2000)
             if target_speed > INITIAL_BALL_SPEED_MAGNITUDE * 2:
                 target_speed = INITIAL_BALL_SPEED_MAGNITUDE * 2
+            desired_ball_vx = relative_impact * INITIAL_BALL_SPEED_MAGNITUDE * 1.5
+            max_vx_for_45_deg_angle = target_speed / math.sqrt(2)
+            if abs(desired_ball_vx) > max_vx_for_45_deg_angle:
+                self.ball_vx = max_vx_for_45_deg_angle * (1 if desired_ball_vx > 0 else -1)
+            else:
+                self.ball_vx = desired_ball_vx
             vy_squared = target_speed**2 - self.ball_vx**2
             if vy_squared < 0:
                 vy_squared = 0
