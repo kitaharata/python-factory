@@ -6,7 +6,7 @@ import urllib.parse
 
 def ip_to_decimal(ip_address):
     """Converts an IP address string (IPv4 or IPv6) to its decimal representation."""
-    if ip_address == "::1":
+    if ip_address == "::1" or ip_address == "0:0:0:0:0:0:0:1":
         ip_address = "127.0.0.1"
     try:
         packed_ip = socket.inet_aton(ip_address)
@@ -14,9 +14,14 @@ def ip_to_decimal(ip_address):
         return str(decimal_ip)
     except socket.error:
         try:
-            packed_ip = socket.inet_pton(socket.AF_INET6, ip_address)
-            decimal_ip = int.from_bytes(packed_ip, byteorder="big")
-            return str(decimal_ip)
+            packed_ip_v6 = socket.inet_pton(socket.AF_INET6, ip_address)
+            if packed_ip_v6[0:12] == b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xff\xff":
+                ipv4_bytes = packed_ip_v6[12:]
+                decimal_ip = struct.unpack("!I", ipv4_bytes)[0]
+                return str(decimal_ip)
+            else:
+                decimal_ip = int.from_bytes(packed_ip_v6, byteorder="big")
+                return str(decimal_ip)
         except socket.error:
             return None
 
