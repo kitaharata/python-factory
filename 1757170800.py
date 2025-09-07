@@ -115,7 +115,7 @@ def generate_pbm_image(barcode_pattern, bar_width, bar_height, padding_x, paddin
 
 def main():
     if len(sys.argv) != 2:
-        print("Usage: python script_name.py <13-digit barcode>")
+        print("Usage: python 1757170800.py <13-digit barcode>")
         sys.exit(1)
     barcode_input = sys.argv[1]
     try:
