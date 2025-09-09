@@ -10,12 +10,24 @@ load_dotenv()
 prompt = ChatPromptTemplate.from_messages(
     [
         ("system", "You are a helpful assistant."),
-        ("human", "{question}"),
+        (
+            "human",
+            [
+                {"type": "text", "text": "{question}"},
+                {"type": "image_url", "image_url": {"url": "{image_url}"}},
+            ],
+        ),
     ]
 )
 model = ChatGoogleGenerativeAI(api_key=os.getenv("GEMINI_API_KEY"), model="gemini-2.5-flash")
 output_parser = StrOutputParser()
 chain = prompt | model | output_parser
-output = chain.invoke({"question": input("Question: ")})
+
+user_question = input("Question: ")
+user_image_url = input("Image URL (optional): ")
+invoke_params = {"question": user_question, "image_url": ""}
+if user_image_url:
+    invoke_params["image_url"] = user_image_url
+output = chain.invoke(invoke_params)
 
 print(output)
