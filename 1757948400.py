@@ -5,7 +5,7 @@ from PIL import Image, ImageDraw
 
 
 def generate_ellipse_image():
-    """Generates an image with random ellipses and saves it to a file."""
+    """Generates an image with random circle and saves it to a file."""
     image_size = (480, 480)
     background_color = (255, 255, 255)
     img = Image.new("RGB", image_size, background_color)
@@ -30,7 +30,7 @@ def generate_ellipse_image():
         x2 = center_x + circle_radius
         y2 = center_y + circle_radius
         draw.ellipse([x1, y1, x2, y2], outline=(0, 0, 0), width=1)
-    output_filename = "generated_ellipses.png"
+    output_filename = "generated_circle.png"
     img.save(output_filename)
     print(f"Generated image '{output_filename}'.")
 
