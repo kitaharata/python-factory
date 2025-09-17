@@ -27,25 +27,27 @@
 
         {% else %} {% if youtube_videos %}
 
-        <table>
-          <thead>
-            <tr>
-              <th>No.</th>
-              <th>URL</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for video in youtube_videos %}
-            <tr>
-              <td><a href="{{ url_for('index', i=loop.index) }}">{{ loop.index }}</a></td>
-              <td>
-                <a href="{{ video.watch_url }}" rel="nofollow noopener noreferrer" target="_blank"
-                >{{ video.watch_url }}</a>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+        <div class="overflow-auto">
+          <table>
+            <thead>
+              <tr>
+                <th>No.</th>
+                <th>URL</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for video in youtube_videos %}
+              <tr>
+                <td><a href="{{ url_for('index', i=loop.index) }}">{{ loop.index }}</a></td>
+                <td>
+                  <a href="{{ video.watch_url }}" rel="nofollow noopener noreferrer" target="_blank"
+                  >{{ video.watch_url }}</a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
 
         {% else %}
         <p>No videos have been added yet.</p>
