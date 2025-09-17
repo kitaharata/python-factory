@@ -2,7 +2,7 @@ import json
 import os
 import re
 import sys
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 
 from flask import Flask, redirect, render_template, request, url_for
 
@@ -55,15 +55,9 @@ def extract_youtube_info(url):
     except Exception:
         return video_info
 
-    video_id_match = re.search(r"(?:v=|youtu\.be/|/embed/|/shorts/|/live/)([a-zA-Z0-9_-]{11})", url)
+    video_id_match = re.search(r"(?:v=|//youtu\.be/|/embed/|/shorts/|/live/)([a-zA-Z0-9_-]{11})", url)
     if video_id_match:
         video_info["v"] = video_id_match.group(1)
-    list_id_match = re.search(r"(?:list=)([^&]+)", url)
-    if list_id_match:
-        video_info["list"] = list_id_match.group(1)
-    time_match = re.search(r"(?:t=)([^&]+)", url)
-    if time_match:
-        video_info["t"] = time_match.group(1)
 
     channel_id_match = re.search(r"/channel/([a-zA-Z0-9_-]{24})", url)
     if channel_id_match:
@@ -71,6 +65,12 @@ def extract_youtube_info(url):
         if channel_id.startswith("UC"):
             list_id = "UU" + channel_id[2:]
             video_info["list"] = list_id
+
+    params = parse_qs(parsed.query)
+    if "list" in params:
+        video_info["list"] = params["list"][0]
+    if "t" in params:
+        video_info["t"] = params["t"][0]
 
     if "v" in video_info and video_info["v"] == "videoseries":
         video_info.pop("v")
