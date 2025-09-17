@@ -35,11 +35,9 @@ def extract_youtube_info(url):
     """Extracts YouTube video and playlist information from a URL."""
     video_info = {}
     try:
-        if not url.startswith(("http://", "https://")):
-            url_for_parse = "https://" + url
-        else:
-            url_for_parse = url
-        parsed = urlparse(url_for_parse)
+        parsed = urlparse(url)
+        if parsed.scheme not in ("http", "https"):
+            return video_info
         host = parsed.netloc.lower()
         valid_hosts = {
             "www.youtube.com",
@@ -57,7 +55,7 @@ def extract_youtube_info(url):
     except Exception:
         return video_info
 
-    video_id_match = re.search(r"(?:v=|youtu\.be/|embed/|shorts/|live/|v/)([a-zA-Z0-9_-]{11})", url)
+    video_id_match = re.search(r"(?:v=|youtu\.be/|/embed/|/shorts/|/live/)([a-zA-Z0-9_-]{11})", url)
     if video_id_match:
         video_info["v"] = video_id_match.group(1)
     list_id_match = re.search(r"(?:list=)([^&]+)", url)
@@ -66,43 +64,62 @@ def extract_youtube_info(url):
     time_match = re.search(r"(?:t=)([^&]+)", url)
     if time_match:
         video_info["t"] = time_match.group(1)
+
+    channel_id_match = re.search(r"/channel/([a-zA-Z0-9_-]{24})", url)
+    if channel_id_match:
+        channel_id = channel_id_match.group(1)
+        if channel_id.startswith("UC"):
+            list_id = "UU" + channel_id[2:]
+            video_info["list"] = list_id
+
+    if "v" in video_info and video_info["v"] == "videoseries":
+        video_info.pop("v")
     return video_info
 
 
 def build_embed_url(info):
     """Builds the embed URL from video info dictionary."""
     video_id = info.get("v")
-    if not video_id:
-        return None
-    embed_url = f"https://www.youtube-nocookie.com/embed/{video_id}"
-    params = []
     list_id = info.get("list", "")
-    if list_id:
-        params.append(f"list={list_id}")
-    t = info.get("t")
-    if t:
-        params.append(f"t={t}")
-    if params:
-        embed_url += "?" + "&".join(params)
-    return embed_url
+    if video_id:
+        embed_url = f"https://www.youtube-nocookie.com/embed/{video_id}"
+        params = []
+        if list_id:
+            params.append(f"list={list_id}")
+        t = info.get("t")
+        if t:
+            params.append(f"t={t}")
+        params.append("loop=1")
+        params.append("autoplay=1")
+        if params:
+            embed_url += "?" + "&".join(params)
+        return embed_url
+    elif list_id:
+        embed_url = f"https://www.youtube.com/embed/videoseries?list={list_id}&loop=1&autoplay=1"
+        return embed_url
+    else:
+        return None
 
 
 def build_watch_url(info):
     """Builds the watch URL from video info dictionary."""
     video_id = info.get("v")
-    if not video_id:
-        return None
-    watch_url = f"https://www.youtube.com/watch?v={video_id}"
-    params = []
     list_id = info.get("list", "")
-    if list_id:
-        params.append(f"list={list_id}")
-    t = info.get("t")
-    if t:
-        params.append(f"t={t}")
-    if params:
-        watch_url += "&" + "&".join(params)
-    return watch_url
+    if video_id:
+        watch_url = f"https://www.youtube.com/watch?v={video_id}"
+        params = []
+        if list_id:
+            params.append(f"list={list_id}")
+        t = info.get("t")
+        if t:
+            params.append(f"t={t}")
+        if params:
+            watch_url += "&" + "&".join(params)
+        return watch_url
+    elif list_id:
+        return f"https://www.youtube.com/playlist?list={list_id}"
+    else:
+        return None
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -120,18 +137,29 @@ def index():
         youtube_list = data.setdefault("youtube", [])
         for url in urls:
             video_info = extract_youtube_info(url)
-            if "v" not in video_info:
+            if "v" not in video_info and "list" not in video_info:
                 continue
-            video_id = video_info["v"]
-            for entry in youtube_list:
-                if entry.get("v") == video_id:
-                    if "list" in video_info:
-                        entry["list"] = video_info["list"]
-                    if "t" in video_info:
-                        entry["t"] = video_info["t"]
-                    break
-            else:
-                youtube_list.append(video_info)
+            updated = False
+            if "v" in video_info:
+                video_id = video_info["v"]
+                for entry in youtube_list:
+                    if entry.get("v") == video_id:
+                        if "list" in video_info:
+                            entry["list"] = video_info["list"]
+                        if "t" in video_info:
+                            entry["t"] = video_info["t"]
+                        updated = True
+                        break
+                if not updated:
+                    youtube_list.append(video_info)
+            if "list" in video_info and "v" not in video_info:
+                list_id = video_info["list"]
+                for entry in youtube_list:
+                    if "v" not in entry and entry.get("list") == list_id:
+                        updated = True
+                        break
+                if not updated:
+                    youtube_list.append(video_info)
         write_youtube_data(data)
         return redirect(url_for("index"))
 
