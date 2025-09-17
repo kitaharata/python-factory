@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouFlask</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  </head>
+  <body>
+    <main class="container">
+      <h1>YouFlask</h1>
+
+      <article>
+        <h2>Saved Videos</h2>
+
+        {% if mode == 'single' %}
+        <p><a href="{{ url_for('index') }}">Back to List</a></p>
+        <h3>Video {{ index }}</h3>
+
+        <iframe
+          width="300"
+          height="300"
+          src="{{ video.embed_url }}"
+          frameborder="0"
+          allowfullscreen
+        ></iframe>
+
+        {% else %} {% if youtube_videos %}
+
+        <table>
+          <thead>
+            <tr>
+              <th>番号</th>
+              <th>URL</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for video in youtube_videos %}
+            <tr>
+              <td><a href="{{ url_for('index', i=loop.index0) }}">{{ loop.index }}</a></td>
+              <td>
+                <a href="{{ video.watch_url }}" rel="nofollow noopener noreferrer" target="_blank"
+                >{{ video.watch_url }}</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        {% else %}
+        <p>No videos have been added yet.</p>
+        {% endif %} {% endif %}
+      </article>
+
+      <article>
+        <h2>Add YouTube Video</h2>
+
+        <form action="/" method="post">
+          <label for="youtube_urls">YouTube URLs:</label>
+          <textarea
+            id="youtube_urls"
+            name="youtube_urls"
+            placeholder="Enter YouTube video URLs, one per line"
+            rows="5"
+            required
+          ></textarea>
+          <button type="submit">Add</button>
+        </form>
+      </article>
+    </main>
+  </body>
+</html>
