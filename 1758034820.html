@@ -37,7 +37,7 @@
           <tbody>
             {% for video in youtube_videos %}
             <tr>
-              <td><a href="{{ url_for('index', i=loop.index0) }}">{{ loop.index }}</a></td>
+              <td><a href="{{ url_for('index', i=loop.index) }}">{{ loop.index }}</a></td>
               <td>
                 <a href="{{ video.watch_url }}" rel="nofollow noopener noreferrer" target="_blank"
                 >{{ video.watch_url }}</a>

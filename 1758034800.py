@@ -166,10 +166,11 @@ def index():
     data = read_youtube_data()
     youtube_videos = data.get("youtube", [])
     index_param = request.args.get("i", type=int)
-    if index_param is not None and 0 <= index_param < len(youtube_videos):
-        video = youtube_videos[index_param].copy()
+    if index_param is not None and 1 <= index_param <= len(youtube_videos):
+        list_index = index_param - 1
+        video = youtube_videos[list_index].copy()
         video["embed_url"] = build_embed_url(video)
-        return render_template("1758034820.html", mode="single", video=video, index=index_param + 1)
+        return render_template("1758034820.html", mode="single", video=video, index=index_param)
 
     for video in youtube_videos:
         video["embed_url"] = build_embed_url(video)
