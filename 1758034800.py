@@ -88,7 +88,7 @@ def build_embed_url(info):
             params.append(f"list={list_id}")
         t = info.get("t")
         if t:
-            params.append(f"t={t}")
+            params.append(f"start={t}")
         params.append("loop=1")
         params.append("autoplay=1")
         if params:
