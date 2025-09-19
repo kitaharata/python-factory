@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZipFlask</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.yellow.min.css">
+  </head>
+  <body>
+    <main class="container">
+      <h1>ZipFlask</h1>
+
+      {% if not files %}
+      <p>
+        No ZIP file provided. Please run the script with the ZIP file path as an argument (e.g., python 1758121200.py
+        path/to/your.zip).
+      </p>
+      {% endif %} {% if files %} {% for file in files %}
+      <article>
+        <h2>{{ file.name }}</h2>
+
+        {% if file.is_image %}
+        <img loading="lazy" src="data:{{ file.mime }};base64,{{ file.content }}">
+        {% else %}
+        <pre>{{ file.content }}</pre>
+        {% endif %}
+      </article>
+      {% endfor %} {% endif %}
+    </main>
+  </body>
+</html>
