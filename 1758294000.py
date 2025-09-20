@@ -50,10 +50,10 @@ def create_combined_image(dithered_images, rows, cols):
     col_widths = [0] * cols
     row_heights = [0] * rows
     n = len(dithered_images)
-    for idx in range(n):
-        r = idx // cols
-        c = idx % cols
-        w, h = dithered_images[idx].size
+    for i in range(n):
+        r = i // cols
+        c = i % cols
+        w, h = dithered_images[i].size
         row_heights[r] = max(row_heights[r], h)
         col_widths[c] = max(col_widths[c], w)
 
