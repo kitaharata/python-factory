@@ -50,15 +50,15 @@ if user_image_path:
                 "mime_type": mime_type,
             }
         )
-parser = JsonOutputParser()
 prompt = ChatPromptTemplate.from_messages(
     [
         ("system", "You are a helpful assistant.\n{format_instructions}"),
         ("human", human_message_content),
     ]
-).partial(format_instructions=parser.get_format_instructions())
+)
 model = ChatGoogleGenerativeAI(api_key=os.getenv("GEMINI_API_KEY"), model="gemini-2.5-flash")
-chain = prompt | model | parser
-output = chain.invoke({"question": user_question})
+output_parser = JsonOutputParser()
+chain = prompt | model | output_parser
+output = chain.invoke({"format_instructions": output_parser.get_format_instructions(), "question": user_question})
 
-print(json.dumps(output, indent=2))
+print(json.dumps(output, ensure_ascii=False, indent=2))
