@@ -53,6 +53,7 @@
 - 2025-09-20 - DitherGrid Packer - [1758294000.py](1758294000.py)
 - 2025-09-21 - FileExt Counter - [1758380400.py](1758380400.py)
 - 2025-09-22 - LearnChain (Take 6) - [1758466800.py](1758466800.py)
+- 2025-09-23 - Hex Dump Viewer - [1758553200.py](1758553200.py)
 
 Run
 
