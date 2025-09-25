@@ -9,7 +9,7 @@ class FlashCalcApp(tk.Tk):
         """Initialize the application, set up UI components, and generate first problem."""
         super().__init__()
         self.title("Flash Calculation Quiz")
-        self.geometry("300x400")
+        self.geometry("250x450")
 
         self.problem_label = tk.Label(self, text="", font=("Arial", 24))
         self.problem_label.pack(pady=20)
@@ -28,16 +28,16 @@ class FlashCalcApp(tk.Tk):
             btn.grid(row=row, column=col, padx=2, pady=2)
 
         btn_zero = tk.Button(button_frame, text="0", width=5, height=2, command=lambda: self.append_digit(0))
-        btn_zero.grid(row=3, column=1, pady=2)
+        btn_zero.grid(row=3, column=0, padx=2, pady=2)
 
-        btn_clear = tk.Button(self, text="Clear", width=10, height=2, command=self.clear_input)
-        btn_clear.pack(pady=5)
+        btn_clear = tk.Button(button_frame, text="C", width=5, height=2, command=self.clear_input)
+        btn_clear.grid(row=3, column=2, padx=2, pady=2)
 
-        btn_enter = tk.Button(self, text="Enter", width=10, height=2, command=self.check_answer)
-        btn_enter.pack(pady=5)
+        self.score = 0
 
         self.score = 0
         self.timer = None
+        self.input_text = ""
         self.score_label = tk.Label(self, text="Score: 0", font=("Arial", 16))
         self.score_label.pack(pady=10)
 
@@ -55,30 +55,33 @@ class FlashCalcApp(tk.Tk):
             if a < b:
                 a, b = b, a
             correct = a - b
-        else:  # '*'
+        else:
             correct = a * b
 
         self.a, self.b, self.op, self.correct = a, b, op, correct
         self.expected_digits = 1 if self.correct < 10 else 2
-        self.problem_label.config(text=f"{a} {op} {b} = ")
+        self.problem_label.config(text=f"{self.a} {self.op} {self.b} = ")
         self.clear_input()
 
     def append_digit(self, digit):
         """Append a digit to the current answer input and check if complete."""
-        current = self.answer_var.get()
-        if len(current) < self.expected_digits:
-            new_current = current + str(digit)
-            self.answer_var.set(new_current)
-            if len(new_current) == self.expected_digits:
+        if len(self.input_text) < self.expected_digits:
+            self.input_text += str(digit)
+            base = f"{self.a} {self.op} {self.b} = "
+            self.problem_label.config(text=base + self.input_text)
+            if len(self.input_text) == self.expected_digits:
                 self.check_answer()
 
     def clear_input(self):
         """Clear the current answer input."""
+        self.input_text = ""
+        base = f"{self.a} {self.op} {self.b} = "
+        self.problem_label.config(text=base)
         self.answer_var.set("")
 
     def check_answer(self):
         """Check the user's answer, update score, and prepare next problem."""
-        user_input = self.answer_var.get().strip()
+        user_input = self.input_text.strip()
         if not user_input:
             return
         try:
@@ -92,13 +95,12 @@ class FlashCalcApp(tk.Tk):
             self.problem_label.config(text=f"{self.a} {self.op} {self.b} = {user_input}")
             self.after(1500, self.new_problem)
         except ValueError:
+            self.input_text = ""
+            base = f"{self.a} {self.op} {self.b} = "
+            self.problem_label.config(text=base)
             self.answer_var.set("")
-
-    def run(self):
-        """Start the application's main loop."""
-        self.mainloop()
 
 
 if __name__ == "__main__":
     app = FlashCalcApp()
-    app.run()
+    app.mainloop()
