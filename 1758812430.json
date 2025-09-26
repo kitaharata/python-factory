@@ -1,0 +1,107 @@
+{
+  "enemy_types": [
+    {
+      "type": 0,
+      "shape": "tri",
+      "color": 8,
+      "points": 100,
+      "vy_base_min": 0.5,
+      "vy_base_max": 1.5,
+      "vy_scale": 0.2,
+      "vx_base_min": -1.0,
+      "vx_base_max": 1.0,
+      "vx_scale": 0.0,
+      "additional_parts": [
+        { "type": "tri", "rel_x": 0, "rel_y": 0, "w": 4, "h": 3, "color": 11 },
+        { "type": "tri", "rel_x": 4, "rel_y": 0, "w": 4, "h": 3, "color": 11 }
+      ]
+    },
+    {
+      "type": 1,
+      "shape": "rect",
+      "color": 8,
+      "points": 200,
+      "vy_base_min": 1.5,
+      "vy_base_max": 2.5,
+      "vy_scale": 0.5,
+      "vx_base_min": 0.0,
+      "vx_base_max": 0.0,
+      "vx_scale": 0.0,
+      "additional_parts": [
+        { "type": "tri", "rel_x": 0, "rel_y": 0, "w": 4, "h": 3, "color": 11 },
+        { "type": "tri", "rel_x": 4, "rel_y": 0, "w": 4, "h": 3, "color": 11 }
+      ]
+    },
+    {
+      "type": 2,
+      "shape": "circ",
+      "color": 12,
+      "points": 300,
+      "vy_base_min": 2.0,
+      "vy_base_max": 3.0,
+      "vy_scale": 0.3,
+      "vx_base_min": -1.5,
+      "vx_base_max": 1.5,
+      "vx_scale": 0.0,
+      "additional_parts": [
+        { "type": "tri", "rel_x": 0, "rel_y": 0, "w": 4, "h": 3, "color": 11 },
+        { "type": "tri", "rel_x": 4, "rel_y": 0, "w": 4, "h": 3, "color": 11 }
+      ]
+    },
+    {
+      "type": 3,
+      "shape": "rect",
+      "color": 9,
+      "points": 150,
+      "vy_base_min": 1.2,
+      "vy_base_max": 2.2,
+      "vy_scale": 0.4,
+      "vx_base_min": -0.8,
+      "vx_base_max": 0.8,
+      "vx_scale": 0.0,
+      "additional_parts": [
+        { "type": "tri", "rel_x": 0, "rel_y": 0, "w": 4, "h": 3, "color": 11 },
+        { "type": "tri", "rel_x": 4, "rel_y": 0, "w": 4, "h": 3, "color": 11 },
+        { "type": "tri_down", "rel_x": 0, "rel_y": 5, "w": 4, "h": 3, "color": 11 },
+        { "type": "tri_down", "rel_x": 4, "rel_y": 5, "w": 4, "h": 3, "color": 11 }
+      ]
+    }
+  ],
+  "stages": [
+    {
+      "stage": 1,
+      "target_spawn": 10,
+      "spawn_rate": 30,
+      "available_types": [0],
+      "bg_color": 0
+    },
+    {
+      "stage": 2,
+      "target_spawn": 15,
+      "spawn_rate": 27,
+      "available_types": [0, 1],
+      "bg_color": 1
+    },
+    {
+      "stage": 3,
+      "target_spawn": 20,
+      "spawn_rate": 24,
+      "available_types": [0, 1, 2],
+      "bg_color": 0
+    },
+    {
+      "stage": 4,
+      "target_spawn": 25,
+      "spawn_rate": 21,
+      "available_types": [0, 1, 2, 3],
+      "bg_color": 1
+    },
+    {
+      "stage": 5,
+      "target_spawn": 30,
+      "spawn_rate": 18,
+      "available_types": [0, 1, 2, 3],
+      "bg_color": 0
+    }
+  ]
+}
