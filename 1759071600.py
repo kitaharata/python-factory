@@ -106,6 +106,7 @@ json_schema = {
             },
         },
     },
+    "required": ["images", "tilemaps", "sounds", "musics"],
 }
 
 system_instruction = """You are an expert Pyxel asset configuration generator. Your task is to produce a JSON object defining assets (images, tilemaps, sounds, musics) based on the user's request, adhering strictly to the provided JSON schema.
