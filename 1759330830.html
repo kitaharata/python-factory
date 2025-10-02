@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Scheduler Web UI</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.green.min.css">
+  </head>
+  <body>
+    <main class="container">
+      <h1>Task Scheduler</h1>
+
+      <article>
+        <h2>Add New Task</h2>
+
+        <form method="POST" action="{{ url_for('index') }}">
+          <label for="due">Due Date (e.g., {{ date_format_hint }}):</label>
+          <input
+            type="text"
+            id="due"
+            name="due"
+            required
+            placeholder="{{ date_format_hint }}"
+            value="{{ default_due }}"
+          >
+
+          <label for="description">Task Description:</label>
+          <textarea id="description" name="description" rows="3" required></textarea>
+
+          <button type="submit">Add Task</button>
+        </form>
+      </article>
+
+      <article>
+        <h2>Task List</h2>
+        {% if not tasks %}
+        <p>No tasks available.</p>
+        {% else %}
+        <div class="overflow-auto">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Status</th>
+                <th>Due Date</th>
+                <th>Description</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for task in tasks %}
+              <tr class="{% if task.done %}done{% endif %}">
+                <td>{{ task.id }}</td>
+                <td>{% if task.done %}DONE{% else %}PENDING{% endif %}</td>
+                <td>{{ task.due_date }}</td>
+                <td>{{ task.description }}</td>
+                <td>
+                  <a
+                    href="{{ url_for('perform_action', original_index=task.original_index, action='delete') }}"
+                    onclick="return confirm('Are you sure you want to delete this task?')"
+                    role="button"
+                    class="secondary"
+                  >Delete</a>
+                  {% if task.done %}
+                  <a
+                    href="{{ url_for('perform_action', original_index=task.original_index, action='unmark') }}"
+                    role="button"
+                    class="contrast"
+                  >Unmark</a>
+                  {% else %}
+                  <a
+                    href="{{ url_for('perform_action', original_index=task.original_index, action='mark') }}"
+                    role="button"
+                  >Mark Done</a>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% endif %}
+      </article>
+    </main>
+  </body>
+</html>
