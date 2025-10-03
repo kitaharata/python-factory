@@ -1,6 +1,6 @@
 import sys
 
-import markdown_it
+from markdown_it import MarkdownIt
 
 
 def process_markdown_file(file_path):
@@ -14,7 +14,7 @@ def process_markdown_file(file_path):
     except Exception as e:
         print(f"An error occurred while reading the file: {e}")
         sys.exit(1)
-    md = markdown_it.MarkdownIt()
+    md = MarkdownIt()
     html_output = md.render(markdown_input)
     print(html_output)
 
