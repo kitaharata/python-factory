@@ -20,6 +20,7 @@ def create_orihon(image_dir):
         cell_width = A4_WIDTH // COLS
         cell_height = A4_HEIGHT // ROWS
         new_img = Image.new("RGB", (A4_WIDTH, A4_HEIGHT), "white")
+
         for idx, page_num in enumerate(PAGE_ORDER):
             if page_num > len(chunk):
                 continue
@@ -28,16 +29,19 @@ def create_orihon(image_dir):
             x = col * cell_width
             y = row * cell_height
             img_path = os.path.join(image_dir, chunk[page_num - 1])
+
             img = Image.open(img_path)
             w_percent = cell_width / img.width
             new_height = int(img.height * w_percent)
             resized_img = img.resize((cell_width, new_height), Image.Resampling.LANCZOS)
+
             background = Image.new("RGB", (cell_width, cell_height), "white")
             y_offset = (cell_height - new_height) // 2
             background.paste(resized_img, (0, y_offset))
             if page_num in [4, 5, 6, 7]:
                 background = background.rotate(180, expand=True)
             new_img.paste(background, (x, y))
+
         output_filename = f"output_orihon_{page_idx + 1}.png"
         new_img.save(output_filename)
         print(f"Orihon page {page_idx + 1} saved as: {output_filename}")
