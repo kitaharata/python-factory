@@ -23,8 +23,8 @@ def create_orihon(image_dir):
         for idx, page_num in enumerate(page_order):
             if page_num > len(chunk):
                 continue
-            row = idx // 2
-            col = idx % 2
+            row = idx // 4
+            col = idx % 4
             x = col * cell_width
             y = row * cell_height
             img_path = os.path.join(image_dir, chunk[page_num - 1])
