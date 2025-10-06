@@ -15,8 +15,8 @@ def create_orihon(image_dir):
 
     for page_idx in range(total_pages):
         chunk = files[page_idx * 8 : (page_idx + 1) * 8]
-        cell_width = A4_WIDTH // 2
-        cell_height = A4_HEIGHT // 4
+        cell_width = A4_WIDTH // 4
+        cell_height = A4_HEIGHT // 2
         page_order = [7, 6, 5, 4, 8, 1, 2, 3]
         new_img = Image.new("RGB", (A4_WIDTH, A4_HEIGHT), "white")
 
