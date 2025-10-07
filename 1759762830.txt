@@ -1,0 +1,198 @@
+-  foo
+- !foo
+- "foo
+- #foo
+- $foo
+- %foo
+- &foo
+- 'foo
+- (foo
+- )foo
+- *foo
+- +foo
+- ,foo
+- -foo
+- .foo
+- /foo
+- :foo
+- ;foo
+- <foo
+- =foo
+- >foo
+- ?foo
+- @foo
+- [foo
+- \foo
+- ]foo
+- ^foo
+- _foo
+- `foo
+- {foo
+- |foo
+- }foo
+- ~foo
+-   foo
+- ! foo
+- " foo
+- # foo
+- $ foo
+- % foo
+- & foo
+- ' foo
+- ( foo
+- ) foo
+- * foo
+- + foo
+- , foo
+- - foo
+- . foo
+- / foo
+- : foo
+- ; foo
+- < foo
+- = foo
+- > foo
+- ? foo
+- @ foo
+- [ foo
+- \ foo
+- ] foo
+- ^ foo
+- _ foo
+- ` foo
+- { foo
+- | foo
+- } foo
+- ~ foo
+- foo bar
+- foo!bar
+- foo"bar
+- foo#bar
+- foo$bar
+- foo%bar
+- foo&bar
+- foo'bar
+- foo(bar
+- foo)bar
+- foo*bar
+- foo+bar
+- foo,bar
+- foo-bar
+- foo.bar
+- foo/bar
+- foo:bar
+- foo;bar
+- foo<bar
+- foo=bar
+- foo>bar
+- foo?bar
+- foo@bar
+- foo[bar
+- foo\bar
+- foo]bar
+- foo^bar
+- foo_bar
+- foo`bar
+- foo{bar
+- foo|bar
+- foo}bar
+- foo~bar
+- foo   bar
+- foo ! bar
+- foo " bar
+- foo # bar
+- foo $ bar
+- foo % bar
+- foo & bar
+- foo ' bar
+- foo ( bar
+- foo ) bar
+- foo * bar
+- foo + bar
+- foo , bar
+- foo - bar
+- foo . bar
+- foo / bar
+- foo : bar
+- foo ; bar
+- foo < bar
+- foo = bar
+- foo > bar
+- foo ? bar
+- foo @ bar
+- foo [ bar
+- foo \ bar
+- foo ] bar
+- foo ^ bar
+- foo _ bar
+- foo ` bar
+- foo { bar
+- foo | bar
+- foo } bar
+- foo ~ bar
+- bar 
+- bar!
+- bar"
+- bar#
+- bar$
+- bar%
+- bar&
+- bar'
+- bar(
+- bar)
+- bar*
+- bar+
+- bar,
+- bar-
+- bar.
+- bar/
+- bar:
+- bar;
+- bar<
+- bar=
+- bar>
+- bar?
+- bar@
+- bar[
+- bar\
+- bar]
+- bar^
+- bar_
+- bar`
+- bar{
+- bar|
+- bar}
+- bar~
+- bar  
+- bar !
+- bar "
+- bar #
+- bar $
+- bar %
+- bar &
+- bar '
+- bar (
+- bar )
+- bar *
+- bar +
+- bar ,
+- bar -
+- bar .
+- bar /
+- bar :
+- bar ;
+- bar <
+- bar =
+- bar >
+- bar ?
+- bar @
+- bar [
+- bar \
+- bar ]
+- bar ^
+- bar _
+- bar `
+- bar {
+- bar |
+- bar }
+- bar ~
