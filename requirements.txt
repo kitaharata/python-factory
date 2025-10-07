@@ -3,7 +3,6 @@ click==8.2.1
 Flask==3.1.1
 Flask-HTTPAuth==4.8.0
 Flask-SQLAlchemy==3.1.1
-PyYAML==6.0.3
 langchain==1.0.0a3
 langchain-google-genai==2.1.10
 markdown-it-py==4.0.0
@@ -11,6 +10,7 @@ numpy==2.3.2
 pillow==11.3.0
 python-dotenv==1.1.1
 pyxel==2.4.10
+PyYAML==6.0.3
 requests==2.32.4
 rich==14.1.0
 waitress==3.0.2
