@@ -31,7 +31,7 @@ def check_trace(url):
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python check_trace.py <url_or_domain>")
+        print("Usage: python 1760194800.py <url_or_domain>")
         sys.exit(1)
 
     target = sys.argv[1]
