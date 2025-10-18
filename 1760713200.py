@@ -5,12 +5,15 @@ import requests
 
 
 class DohResolverApp(tk.Tk):
+    """A Tkinter app that resolves DNS records over HTTPS."""
+
     def __init__(self):
         super().__init__()
         self.title("DNS over HTTPS Resolver")
         self.setup_ui()
 
     def setup_ui(self):
+        """Set up the user interface components."""
         frame = tk.Frame(self, padx=20, pady=20)
         frame.pack()
 
@@ -32,6 +35,7 @@ class DohResolverApp(tk.Tk):
         self.result_label.pack()
 
     def extract_hostname(self, user_input):
+        """Extract the hostname from the user's input."""
         if "://" not in user_input:
             user_input = "http://" + user_input
         try:
@@ -41,6 +45,7 @@ class DohResolverApp(tk.Tk):
             return None
 
     def resolve_dns(self):
+        """Perform DNS resolution over HTTPS and display results."""
         user_input = self.entry.get().strip()
         record_type = self.record_type.get().upper()
 
