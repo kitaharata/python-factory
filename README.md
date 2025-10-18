@@ -78,6 +78,7 @@
 - 2025-10-15 - CSV to JSON - [1760454000.py](1760454000.py)
 - 2025-10-16 - Waitress Server (Take 1) - [1760540400.py](1760540400.py)
 - 2025-10-17 - Waitress Server (Take 2) - [1760626800.py](1760626800.py)
+- 2025-10-18 - DoH Request Client - [1760713200.py](1760713200.py)
 
 Run
 
