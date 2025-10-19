@@ -1,4 +1,3 @@
-import heapq
 import operator
 import sys
 
@@ -10,24 +9,17 @@ def format_number_for_display(num):
     return num
 
 
-def heappop_stack(h):
-    """Pops a value from the heap, following LIFO order."""
+def pop_stack(h):
+    """Pops a value from the RPN stack (LIFO)."""
     if not h:
         raise IndexError("pop from empty RPN stack")
-    _, value = heapq.heappop(h)
-    return value
+    return h.pop()
 
 
-def rpn_calculate_with_heapq(tokens):
-    """Calculates an RPN expression using heapq internally to simulate a LIFO stack structure."""
+def rpn_calculate(tokens):
+    """Calculates an RPN expression using a standard Python list as a LIFO stack."""
 
-    sequence_counter = 0
     h = []
-
-    def heappush_stack_local(value):
-        nonlocal sequence_counter
-        heapq.heappush(h, (-sequence_counter, value))
-        sequence_counter += 1
 
     ops = {
         "+": operator.add,
@@ -41,8 +33,8 @@ def rpn_calculate_with_heapq(tokens):
             if len(h) < 2:
                 raise ValueError("Insufficient operands")
 
-            operand2 = heappop_stack(h)
-            operand1 = heappop_stack(h)
+            operand2 = pop_stack(h)
+            operand1 = pop_stack(h)
 
             result = ops[token](operand1, operand2)
 
@@ -51,18 +43,18 @@ def rpn_calculate_with_heapq(tokens):
             res_display = format_number_for_display(result)
 
             print(f"{op1_display} {token} {op2_display} = {res_display}")
-            heappush_stack_local(result)
+            h.append(result)
         else:
             try:
                 num = float(token)
-                heappush_stack_local(num)
+                h.append(num)
             except ValueError:
                 raise ValueError(f"Unknown token: {token}")
 
     if len(h) != 1:
         raise ValueError("Invalid RPN expression (too many operands or missing operators)")
 
-    return heappop_stack(h)
+    return pop_stack(h)
 
 
 if __name__ == "__main__":
@@ -74,7 +66,7 @@ if __name__ == "__main__":
     tokens = sys.argv[1:]
 
     try:
-        result = rpn_calculate_with_heapq(tokens)
+        result = rpn_calculate(tokens)
         res_display = format_number_for_display(result)
         print(res_display)
     except Exception as e:
