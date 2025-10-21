@@ -81,6 +81,7 @@
 - 2025-10-18 - DoH Request Client - [1760713200.py](1760713200.py)
 - 2025-10-19 - RPN Calc - [1760799600.py](1760799600.py)
 - 2025-10-20 - Waitress Server (Take 3) - [1760886000.py](1760886000.py)
+- 2025-10-21 - Default Apps By File Type - [1760972400.py](1760972400.py)
 
 Run
 
