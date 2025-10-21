@@ -82,6 +82,7 @@
 - 2025-10-19 - RPN Calc - [1760799600.py](1760799600.py)
 - 2025-10-20 - Waitress Server (Take 3) - [1760886000.py](1760886000.py)
 - 2025-10-21 - Default Apps By File Type - [1760972400.py](1760972400.py)
+- 2025-10-22 - Jinja2 Factory (Take 1) - [1761058800.py](1761058800.py)
 
 Run
 
