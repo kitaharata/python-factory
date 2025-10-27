@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZIP File Uploader</title>
+  </head>
+  <body>
+    <h1>ZIP File Uploader</h1>
+
+    {% if error %}
+    <p style="color: red">Error: {{ error }}</p>
+    {% endif %} {% if message %}
+    <p style="color: green">Success: {{ message }}</p>
+    <hr>
+    <p>Upload another ZIP file:</p>
+    {% else %}
+    <p>Upload a ZIP file to store it in the data directory.</p>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data">
+      <input type="file" name="file" accept=".zip" required>
+      <input type="submit" value="Upload ZIP File">
+    </form>
+  </body>
+</html>
