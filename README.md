@@ -102,6 +102,7 @@
 - 2025-11-08 - System Monitoring Tool - [1762527600.py](1762527600.py)
 - 2025-11-09 - Processes Monitoring Tool - [1762614000.py](1762614000.py)
 - 2025-11-10 - Meminfo - [1762700400.py](1762700400.py)
+- 2025-11-11 - Netinfo - [1762786800.py](1762786800.py)
 
 Run
 
