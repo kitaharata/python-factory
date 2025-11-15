@@ -50,43 +50,55 @@ def get_heat_color(recency):
     return f"#{R:02X}{G:02X}{B:02X}"
 
 
-def display_heatmap_tk(file_stats, target_dir):
+class FileRecencyApp(tk.Tk):
     """Displays file recency scores in a Tkinter window."""
-    N = len(file_stats)
-    if N == 0:
-        print("No files found to display.")
-        return
-    file_stats.sort(key=lambda x: x["recency"], reverse=True)
-    root = tk.Tk()
-    root.title(f"File Recency Heatmap - {target_dir}")
-    frame = ttk.Frame(root, padding="10")
-    frame.pack(fill="both", expand=True)
-    tree = ttk.Treeview(frame, columns=("Recency", "Modification Time", "Directory"), show="headings")
-    tree.heading("#0", text="Filename (Alphabet)")
-    tree.column("#0", minwidth=150, width=250, stretch=tk.YES, anchor=tk.W)
-    tree.heading("Recency", text="Recency Score (Time/Category)")
-    tree.heading("Modification Time", text="Modification Time (Time)")
-    tree.heading("Directory", text="Directory Path (Location/Hierarchy)")
-    tree.column("Recency", width=100, anchor=tk.CENTER)
-    tree.column("Modification Time", width=180, anchor=tk.W)
-    tree.column("Directory", width=350, anchor=tk.W)
-    scrollbar = ttk.Scrollbar(frame, orient=tk.VERTICAL, command=tree.yview)
-    tree.configure(yscrollcommand=scrollbar.set)
-    scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-    tree.pack(fill="both", expand=True)
-    for i, stats in enumerate(file_stats):
-        recency = stats["recency"]
-        color_hex = get_heat_color(recency)
-        tag_name = f"color{i}"
-        tree.tag_configure(tag_name, background=color_hex, foreground="white")
-        if recency > 0.8:
-            tree.tag_configure(tag_name, foreground="black")
-        filepath = stats["path"]
-        directory = os.path.dirname(filepath)
-        filename = os.path.basename(filepath)
-        mtime_str = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(stats["mtime"]))
-        tree.insert("", "end", text=filename, values=(f"{recency:.4f}", mtime_str, directory), tags=(tag_name,))
-    root.mainloop()
+
+    def __init__(self, target_dir):
+        super().__init__()
+        self.target_dir = target_dir
+
+        file_stats = get_file_stats(target_dir)
+        N = len(file_stats)
+
+        if N == 0:
+            print("No files found to display.")
+            self.after(1, self.destroy)
+            return
+
+        self.title("File Access Heatmap")
+        self.geometry("800x600")
+        self.display_files(file_stats)
+
+    def display_files(self, file_stats):
+        file_stats.sort(key=lambda x: x["recency"], reverse=True)
+
+        frame = ttk.Frame(self, padding="10")
+        frame.pack(fill="both", expand=True)
+
+        tree = ttk.Treeview(frame, columns=("Recency", "Modification Time"), show="tree headings")
+        tree.heading("#0", text="File Path")
+        tree.heading("Recency", text="Recency Score")
+        tree.heading("Modification Time", text="Modification Time")
+        tree.column("#0", minwidth=100, width=450, stretch=tk.NO, anchor=tk.W)
+        tree.column("Recency", minwidth=100, width=100, stretch=tk.NO, anchor=tk.CENTER)
+        tree.column("Modification Time", minwidth=100, width=200, stretch=tk.NO, anchor=tk.E)
+
+        scrollbar = ttk.Scrollbar(frame, orient=tk.VERTICAL, command=tree.yview)
+        tree.configure(yscrollcommand=scrollbar.set)
+
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        tree.pack(fill="both", expand=True)
+
+        for i, stats in enumerate(file_stats):
+            recency = stats["recency"]
+            color_hex = get_heat_color(recency)
+            tag_name = f"color{i}"
+            tree.tag_configure(tag_name, background=color_hex, foreground="white")
+            if recency > 0.8:
+                tree.tag_configure(tag_name, foreground="black")
+            filepath = stats["path"]
+            mtime_str = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(stats["mtime"]))
+            tree.insert("", "end", text=filepath, values=(f"{recency:.4f}", mtime_str), tags=(tag_name,))
 
 
 if __name__ == "__main__":
@@ -94,8 +106,10 @@ if __name__ == "__main__":
         target_dir = sys.argv[1]
     else:
         target_dir = os.getcwd()
+
     if not os.path.isdir(target_dir):
         print(f"Error: Directory not found: {target_dir}")
         sys.exit(1)
-    file_stats = get_file_stats(target_dir)
-    display_heatmap_tk(file_stats, target_dir)
+
+    app = FileRecencyApp(target_dir)
+    app.mainloop()
