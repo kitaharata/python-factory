@@ -8,19 +8,19 @@ INDEX_HTML = """<!DOCTYPE html>
     <title>Tako Magic</title>
   </head>
   <body>
-    <h1>See Console</h1>
+    <h1>See the console</h1>
     <script type="module">
       import { Tako } from "https://esm.sh/@takojs/tako";
 
       const tako = new Tako();
 
-      tako.print({ message: "Hello, Tako!", level: "assert" });
-      tako.print({ message: "Hello, Tako!", level: "debug" });
-      tako.print({ message: "Hello, Tako!", level: "error" });
-      tako.print({ message: "Hello, Tako!", level: "info" });
-      tako.print({ message: "Hello, Tako!", level: "log" });
-      tako.print({ message: "Hello, Tako!", level: "trace" });
-      tako.print({ message: "Hello, Tako!", level: "warn" });
+      tako.print({ message: "Hello, World!", level: "assert" });
+      tako.print({ message: "Hello, World!", level: "debug" });
+      tako.print({ message: "Hello, World!", level: "error" });
+      tako.print({ message: "Hello, World!", level: "info" });
+      tako.print({ message: "Hello, World!", level: "log" });
+      tako.print({ message: "Hello, World!", level: "trace" });
+      tako.print({ message: "Hello, World!", level: "warn" });
     </script>
   </body>
 </html>
