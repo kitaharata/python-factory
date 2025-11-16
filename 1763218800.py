@@ -14,7 +14,13 @@ INDEX_HTML = """<!DOCTYPE html>
 
       const tako = new Tako();
 
-      tako.cli({}, (c) => c.print({ message: crypto.randomUUID() }));
+      tako.print({ message: "Hello, Tako!", level: "assert" });
+      tako.print({ message: "Hello, Tako!", level: "debug" });
+      tako.print({ message: "Hello, Tako!", level: "error" });
+      tako.print({ message: "Hello, Tako!", level: "info" });
+      tako.print({ message: "Hello, Tako!", level: "log" });
+      tako.print({ message: "Hello, Tako!", level: "trace" });
+      tako.print({ message: "Hello, Tako!", level: "warn" });
     </script>
   </body>
 </html>
