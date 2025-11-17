@@ -108,6 +108,7 @@
 - 2025-11-14 - Certificate Inspector - [1763046000.py](1763046000.py)
 - 2025-11-15 - File Access Heatmap - [1763132400.py](1763132400.py)
 - 2025-11-16 - Tako Magic - [1763218800.py](1763218800.py)
+- 2025-11-17 - Socket Chat (Take 1) - [1763305200.py](1763305200.py)
 
 Run
 
