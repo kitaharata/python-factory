@@ -11,7 +11,10 @@ TIMEOUT = 0.1
 
 
 class ChatClient(tk.Tk):
+    """A LAN chat client application built with Tkinter."""
+
     def __init__(self):
+        """Initializes the ChatClient application and sets up connections."""
         super().__init__()
         self.title("LAN Chat Client")
         self.geometry("600x450")
@@ -36,6 +39,7 @@ class ChatClient(tk.Tk):
         self.connect_and_start()
 
     def setup_gui(self):
+        """Sets up the graphical user interface elements."""
         self.chat_display = scrolledtext.ScrolledText(self, state="disabled", wrap=tk.WORD)
         self.chat_display.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
         input_frame = tk.Frame(self)
@@ -52,12 +56,14 @@ class ChatClient(tk.Tk):
         udp_radio.pack(side=tk.LEFT)
 
     def display_message(self, message):
+        """Displays a message in the chat window and scrolls to the end."""
         self.chat_display.config(state="normal")
         self.chat_display.insert(tk.END, message + "\n")
         self.chat_display.config(state="disabled")
         self.chat_display.yview(tk.END)
 
     def connect_and_start(self):
+        """Establishes TCP and UDP connections and starts the network thread."""
         self.display_message(f"--- Attempting TCP connection to {self.server_ip}:{TCP_PORT} ---")
         try:
             self.tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -87,6 +93,7 @@ class ChatClient(tk.Tk):
             self.on_closing(silent=True)
 
     def send_message(self, event=None):
+        """Handles sending messages via the selected protocol (TCP or UDP)."""
         message = self.msg_input.get().strip()
         if not message:
             return
@@ -151,6 +158,7 @@ class ChatClient(tk.Tk):
             self.cleanup_sockets()
 
     def cleanup_sockets(self):
+        """Closes and nullifies TCP and UDP sockets."""
         if self.tcp_socket:
             try:
                 self.tcp_socket.close()
@@ -165,6 +173,7 @@ class ChatClient(tk.Tk):
             self.udp_socket = None
 
     def on_closing(self, silent=False):
+        """Handles window closing event, sends QUIT, cleans up, and destroys the UI."""
         self.running = False
         if self.tcp_socket:
             try:
@@ -178,7 +187,10 @@ class ChatClient(tk.Tk):
 
 
 class ChatServer:
+    """A simple TCP/IP chat server for relaying messages between clients."""
+
     def __init__(self, host="127.0.0.1", tcp_port=TCP_PORT):
+        """Initializes the ChatServer with host and port settings."""
         self.host = host
         self.tcp_port = tcp_port
         self.running = True
@@ -187,6 +199,7 @@ class ChatServer:
         self.tcp_listener = None
 
     def start(self):
+        """Sets up and starts the TCP listener socket in a new thread."""
         try:
             self.tcp_listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.tcp_listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -201,6 +214,7 @@ class ChatServer:
             return False
 
     def broadcast(self, sender_socket, message):
+        """Sends a message to all connected clients except the sender."""
         encoded_message = message.encode("utf-8")
         for sock, nickname in list(self.clients.items()):
             if sock != sender_socket:
@@ -210,6 +224,7 @@ class ChatServer:
                     self.cleanup_client(sock)
 
     def cleanup_client(self, sock):
+        """Removes a client from tracking lists and closes their socket."""
         if sock in self.inputs:
             self.inputs.remove(sock)
         if sock in self.clients:
@@ -222,6 +237,7 @@ class ChatServer:
             print(f"Warning: Error closing client socket: {e}")
 
     def server_loop(self):
+        """Main server loop using select to handle new connections and client data."""
         while self.running:
             try:
                 readable, _, exceptional = select.select(self.inputs, [], self.inputs, TIMEOUT)
@@ -266,6 +282,7 @@ class ChatServer:
                 break
 
     def stop(self):
+        """Stops the server, closes listeners, and disconnects all clients."""
         self.running = False
         if self.tcp_listener:
             try:
