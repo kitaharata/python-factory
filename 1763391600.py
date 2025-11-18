@@ -10,6 +10,42 @@ BUFFER_SIZE = 4096
 TIMEOUT = 0.1
 
 
+class UDPReceiverProtocol(asyncio.DatagramProtocol):
+    """Asyncio Datagram Protocol for handling UDP messages."""
+
+    def __init__(self, app):
+        self.app = app
+        self.transport = None
+
+    def connection_made(self, transport):
+        self.transport = transport
+        self.app.udp_transport = transport
+
+        try:
+            sock = transport.get_extra_info("socket")
+            if sock:
+                sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+        except Exception as e:
+            print(f"Warning: Failed to set SO_BROADCAST option on UDP socket: {e}")
+
+        self.app.after(0, lambda: self.app.display_message("--- UDP listener active. ---"))
+
+    def datagram_received(self, data, addr):
+        msg = data.decode("utf-8")
+        self.app.after(0, lambda m=msg: self.app.display_message(f"[UDP from {addr[0]}] {m}"))
+
+    def error_received(self, exc):
+        print(f"UDP Error received: {exc}")
+
+    def connection_lost(self, exc):
+        if exc:
+            print(f"UDP Connection lost due to error: {exc}")
+        self.transport = None
+        self.app.udp_transport = None
+        if self.app.running:
+            self.app.after(0, lambda: self.app.display_message("--- UDP listener stopped. ---"))
+
+
 class ChatClient(tk.Tk):
     """A LAN chat client application built with Tkinter."""
 
@@ -34,7 +70,7 @@ class ChatClient(tk.Tk):
             return
         self.tcp_reader = None
         self.tcp_writer = None
-        self.udp_socket = None
+        self.udp_transport = None
         self.listen_task = None
         self.running = True
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
@@ -71,21 +107,15 @@ class ChatClient(tk.Tk):
             self.tcp_reader, self.tcp_writer = await asyncio.open_connection(self.server_ip, TCP_PORT)
             self.display_message("--- TCP connected. ---")
 
-            self.udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            self.udp_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            self.udp_socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
             try:
-                self.udp_socket.bind(("", UDP_PORT))
-                self.udp_socket.setblocking(False)
-
-                self.loop.add_reader(self.udp_socket.fileno(), self._handle_udp_receive)
+                await self.loop.create_datagram_endpoint(lambda: UDPReceiverProtocol(self), local_addr=("", UDP_PORT))
 
             except OSError as e:
                 self.display_message(f"Error: Could not bind UDP socket ({e}). UDP disabled.")
-                self.udp_socket = None
+                self.udp_transport = None
 
             if self.tcp_writer:
-                self.tcp_writer.write(f"NICK:{self.nickname}".encode("utf-8"))
+                self.tcp_writer.write(f"NICK:{self.nickname}\n".encode("utf-8"))
                 await self.tcp_writer.drain()
 
             self.listen_task = self.loop.create_task(self.network_loop())
@@ -97,31 +127,18 @@ class ChatClient(tk.Tk):
             )
             self.after(0, lambda: self.on_closing(silent=True))
         except Exception as e:
-            self.display_message(f"Connection Error: {e}")
-            self.after(0, lambda current_e=e: messagebox.showerror("Error", f"Failed to connect: {current_e}"))
+            error_message = f"{type(e).__name__}: {e}"
+            self.display_message(f"Connection Error: {error_message}")
+            self.after(0, lambda msg=error_message: messagebox.showerror("Error", f"Failed to connect: {msg}"))
             self.after(0, lambda: self.on_closing(silent=True))
-
-    def _handle_udp_receive(self):
-        """Handles synchronous UDP data reception triggered by asyncio loop."""
-        if self.udp_socket:
-            try:
-                data, addr = self.udp_socket.recvfrom(BUFFER_SIZE)
-                if data:
-                    msg = data.decode("utf-8")
-                    self.after(0, lambda m=msg: self.display_message(f"[UDP from {addr[0]}] {m}"))
-            except BlockingIOError:
-                pass
-            except Exception as e:
-                if self.running:
-                    print(f"Client UDP Receive Error: {e}")
 
     async def _send_tcp_message(self, full_message):
         """Asynchronously sends a TCP message."""
         try:
             if self.tcp_writer:
-                self.tcp_writer.write(full_message.encode("utf-8"))
+                self.tcp_writer.write((full_message + "\n").encode("utf-8"))
                 await self.tcp_writer.drain()
-                self.after(0, lambda: self.display_message(f"(TCP Sent) {full_message}"))
+                self.after(0, lambda: self.display_message(f"[TCP] {full_message}"))
             else:
                 self.after(0, lambda: self.display_message("Error: TCP connection not established."))
         except Exception as e:
@@ -139,9 +156,11 @@ class ChatClient(tk.Tk):
 
         if mode == "TCP":
             self.loop.create_task(self._send_tcp_message(full_message))
-        elif mode == "UDP" and self.udp_socket:
+        elif mode == "UDP" and self.udp_transport:
             try:
-                self.udp_socket.sendto(f"(UDP Broadcast) {full_message}".encode("utf-8"), ("255.255.255.255", UDP_PORT))
+                sent_msg = f"(UDP Broadcast) {full_message}"
+                self.udp_transport.sendto(sent_msg.encode("utf-8"), ("255.255.255.255", UDP_PORT))
+                self.display_message(f"[UDP Sent] {sent_msg}")
             except Exception as e:
                 self.display_message(f"Send Error (UDP): {e}")
         else:
@@ -155,9 +174,9 @@ class ChatClient(tk.Tk):
 
         while self.running:
             try:
-                data = await self.tcp_reader.read(BUFFER_SIZE)
+                data = await self.tcp_reader.readline()
                 if data:
-                    msg = data.decode("utf-8")
+                    msg = data.decode("utf-8").strip()
                     self.after(0, lambda m=msg: self.display_message(f"[TCP] {m}"))
                 else:
                     self.after(0, self.handle_disconnect)
@@ -197,26 +216,28 @@ class ChatClient(tk.Tk):
             self.tcp_reader = None
             self.tcp_writer = None
 
-        if self.udp_socket:
+        if self.udp_transport:
             try:
-                self.loop.remove_reader(self.udp_socket.fileno())
-            except Exception:
-                pass
-            try:
-                self.udp_socket.close()
-            except OSError as e:
-                print(f"Warning: Error closing UDP socket: {e}")
-            self.udp_socket = None
+                self.udp_transport.close()
+            except Exception as e:
+                print(f"Warning: Error closing UDP transport: {e}")
+            self.udp_transport = None
 
     def on_closing(self, silent=False):
         """Handles window closing event, sends QUIT, cleans up, and destroys the UI."""
         self.running = False
         if self.tcp_writer:
             try:
+                writer_to_use = self.tcp_writer
 
                 async def send_quit():
-                    self.tcp_writer.write("QUIT".encode("utf-8"))
-                    await self.tcp_writer.drain()
+                    try:
+                        writer_to_use.write("QUIT\n".encode("utf-8"))
+                        await writer_to_use.drain()
+                    except (ConnectionResetError, BrokenPipeError):
+                        pass
+                    except Exception as e:
+                        print(f"Warning: Error sending QUIT signal: {e}")
 
                 self.loop.create_task(send_quit())
             except Exception as e:
@@ -255,7 +276,7 @@ class ChatServer:
 
     async def broadcast(self, sender_writer, message):
         """Sends a message to all connected clients except the sender."""
-        encoded_message = message.encode("utf-8")
+        encoded_message = (message + "\n").encode("utf-8")
 
         writers_to_remove = []
         for writer in list(self.clients.keys()):
@@ -272,12 +293,12 @@ class ChatServer:
         for writer in writers_to_remove:
             self.cleanup_client(writer)
 
-    def cleanup_client(self, writer):
+    async def cleanup_client(self, writer):
         """Removes a client from tracking lists and closes their stream."""
         if writer in self.clients:
             nickname = self.clients.pop(writer)
             print(f"Client {nickname} disconnected.")
-            self.loop.create_task(self.broadcast(None, f"--- {nickname} has left the chat. ---"))
+            await self.broadcast(None, f"--- {nickname} has left the chat. ---")
 
         try:
             writer.close()
@@ -292,7 +313,7 @@ class ChatServer:
         nickname = None
 
         try:
-            data = await reader.read(BUFFER_SIZE)
+            data = await reader.readline()
             if not data:
                 return
 
@@ -303,7 +324,7 @@ class ChatServer:
                 print(f"Client registered: {nickname}")
                 await self.broadcast(None, f"--- {nickname} has joined the chat. ---")
 
-                welcome_msg = f"Welcome, {nickname}!".encode("utf-8")
+                welcome_msg = f"Welcome, {nickname}!\n".encode("utf-8")
                 writer.write(welcome_msg)
                 await writer.drain()
             else:
@@ -312,7 +333,7 @@ class ChatServer:
                 return
 
             while self.running:
-                data = await reader.read(BUFFER_SIZE)
+                data = await reader.readline()
                 if not data:
                     break
 
@@ -332,7 +353,7 @@ class ChatServer:
             print(f"Error handling client {nickname or addr}: {e}")
         finally:
             if writer in self.clients:
-                self.cleanup_client(writer)
+                await self.cleanup_client(writer)
             else:
                 try:
                     writer.close()
@@ -347,7 +368,7 @@ class ChatServer:
             await self.tcp_server.wait_closed()
 
         for writer in list(self.clients.keys()):
-            self.cleanup_client(writer)
+            await self.cleanup_client(writer)
 
         print("Server stopped.")
 
