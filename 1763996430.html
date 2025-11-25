@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>国立国会図書館サーチ</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  </head>
+  <body>
+    <main class="container">
+      <h1>国立国会図書館サーチ</h1>
+      {% if error %}
+      <article>{{ error }}</article>
+      {% endif %} 
+
+      <section>
+        <h2>書籍管理リスト</h2>
+        {% for status_key, status_display in status_map.items() %}
+        <details open>
+            <summary role="button">{{ status_display }} ({{ managed_books_by_status[status_key]|length }})</summary>
+            {% if managed_books_by_status[status_key] %}
+            <ul>
+                {% for book in managed_books_by_status[status_key] %}
+                <li>
+                    <a href="{{ url_for('book_details', isbn=book.isbn_key) }}" title="{{ book.isbn13 or book.isbn10 }}"><strong>{{ book.title }}</strong></a> ({{ book.creator or '著者不明' }})
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p>このカテゴリの書籍は登録されていません。</p>
+            {% endif %}
+        </details>
+        {% endfor %}
+      </section>
+
+      {% if show_form %}
+      <article>
+        <form action="/" method="post">
+          <input type="text" name="query" placeholder="ISBNを入力 (ハイフンなしで10桁または13桁)" required value="{{ query or '' }}">
+          <button type="submit">検索</button>
+        </form>
+      </article>
+      {% endif %} 
+      
+      {% if show_results %}
+      <article>
+        <h2>検索結果: "{{ query }}"</h2>
+      </article>
+      {% if results %} 
+      {% for book in results %}
+      <article>
+        <h3>{{ book.title }}</h3>
+        
+        {% if book.isbn_key %}
+        <p>
+            <strong>現在の管理状態:</strong> {{ book.status_display }}
+        </p>
+
+        {% if book.current_status == 'not_managed' %}
+        <label for="status_{{ book.isbn_key }}">この書籍を管理リストに追加:</label>
+        {% else %}
+        <label for="status_{{ book.isbn_key }}">管理ステータスを変更:</label>
+        {% endif %}
+
+        <form action="/" method="post">
+            <input type="hidden" name="action" value="update_status">
+            <input type="hidden" name="isbn_key" value="{{ book.isbn_key }}">
+
+            {% if book.current_status == 'not_managed' %}
+            <input type="hidden" name="title" value="{{ book.title }}">
+            <input type="hidden" name="creator" value="{{ book.creator }}">
+            <input type="hidden" name="title_transcription" value="{{ book.title_transcription }}">
+            <input type="hidden" name="creator_transcription" value="{{ book.creator_transcription }}">
+            <input type="hidden" name="publisher" value="{{ book.publisher }}">
+            <input type="hidden" name="publication_date" value="{{ book.publication_date }}">
+            <input type="hidden" name="publication_place" value="{{ book.publication_place }}">
+            <input type="hidden" name="price" value="{{ book.price }}">
+            <input type="hidden" name="pages" value="{{ book.pages }}">
+            <input type="hidden" name="subjects" value="{{ book.subjects }}">
+            <input type="hidden" name="isbn10" value="{{ book.isbn10 }}">
+            <input type="hidden" name="isbn13" value="{{ book.isbn13 }}">
+            {% endif %}
+
+            <div class="grid">
+                <select name="new_status" id="status_{{ book.isbn_key }}" required>
+                    <option value="" disabled selected>ステータスを選択</option>
+                    {% for option_key, option_display in status_map.items() %}
+                    <option value="{{ option_key }}" {% if option_key == book.current_status %}selected{% endif %}>{{ option_display }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">保存/更新</button>
+            </div>
+        </form>
+
+        {% if book.current_status != 'not_managed' %}
+        <details class="secondary">
+            <summary role="button">管理情報の編集</summary>
+            <form action="/" method="post">
+                <input type="hidden" name="action" value="delete_book">
+                <input type="hidden" name="isbn_key" value="{{ book.isbn_key }}">
+                <button type="submit" class="secondary">削除</button>
+            </form>
+        </details>
+        {% endif %}
+        {% else %}
+        <p>※ ISBN情報がないため、管理対象として登録できません。</p>
+        {% endif %}
+        
+        <ul>
+          <li><strong>著者:</strong> {{ book.creator if book.creator != '著者不明' else '不明' }}</li>
+          {% if book.title_transcription != '不明' %}
+          <li><strong>タイトル読み:</strong> {{ book.title_transcription }}</li>
+          {% endif %} {% if book.creator_transcription != '不明' %}
+          <li><strong>著者読み:</strong> {{ book.creator_transcription }}</li>
+          {% endif %} {% if book.publisher != '不明' %}
+          <li><strong>出版社:</strong> {{ book.publisher }}</li>
+          {% endif %} {% if book.publication_date != '不明' %}
+          <li><strong>出版年:</strong> {{ book.publication_date }}</li>
+          {% endif %} {% if book.publication_place != '不明' %}
+          <li><strong>出版地:</strong> {{ book.publication_place }}</li>
+          {% endif %} {% if book.price != '不明' %}
+          <li><strong>価格:</strong> {{ book.price }}</li>
+          {% endif %} {% if book.pages != '不明' %}
+          <li><strong>ページ数:</strong> {{ book.pages }}</li>
+          {% endif %} {% if book.subjects != '不明' %}
+          <li><strong>件名:</strong> {{ book.subjects }}</li>
+          {% endif %} {% if book.isbn10 %}
+          <li><strong>ISBN10:</strong> {{ book.isbn10 }}</li>
+          {% endif %} {% if book.isbn13 %}
+          <li><strong>ISBN13:</strong> {{ book.isbn13 }}</li>
+          {% endif %}
+        </ul>
+      </article>
+      {% endfor %} 
+      {% else %}
+      <p>検索結果が見つかりませんでした。</p>
+      {% endif %}
+      <p><a href="/">新しい検索</a></p>
+      {% endif %}
+      <article>
+        <p>
+          本サービスで提供するのメタデータの一部は、<a href="https://ndlsearch.ndl.go.jp/"
+          >国立国会図書館サーチの</a>APIから取得した国立国会図書館蔵書（国立国会図書館が運営）に由来します。
+          ライセンスは<a href="https://creativecommons.org/licenses/by/4.0/legalcode.ja"
+          >クリエイティブ・コモンズ 表示 4.0 国際 パブリック・ライセンス</a>です。
+        </p>
+      </article>
+    </main>
+  </body>
+</html>
